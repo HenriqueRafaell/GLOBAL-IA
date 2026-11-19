@@ -391,29 +391,75 @@ Os logs são JSON por linha e **não têm dados pessoais**. Eles registram só e
 
 ## 8. Como rodar
 
-Requisitos: Python 3.11 ou superior.
+Requisito: Python 3.11 ou superior.
+
+### Passo 1: instalar (igual para os dois modos)
 
 ```bash
-cd genai-helper
+git clone https://github.com/HenriqueRafaell/GLOBAL-IA.git
+cd GLOBAL-IA/genai-helper
 python -m venv .venv
-# Windows:  .venv\Scripts\activate      Linux/macOS:  source .venv/bin/activate
+# Windows:      .venv\Scripts\activate
+# Linux/macOS:  source .venv/bin/activate
 pip install -r requirements.txt
+```
 
-# configuração
-cp .env.example .env          # Windows: copy .env.example .env
-# edite .env e coloque OPENROUTER_API_KEY=...   (ou LLM_MODE=mock para rodar sem chave)
+### Passo 2: rodar os testes (não precisam de chave nem de internet)
 
-# API
+```bash
+python -m pytest -v        # esperado: 87 passed
+```
+
+### Passo 3: configurar o `.env` e escolher um modo
+
+Primeiro copie o arquivo de exemplo:
+
+```bash
+cp .env.example .env       # Windows: copy .env.example .env
+```
+
+Depois escolha **um** dos dois modos e edite o `.env`.
+
+**Opção A: com o LLM real.** Precisa de uma chave gratuita, criada em https://openrouter.ai/keys:
+
+```ini
+OPENROUTER_API_KEY=sk-or-v1-...
+LLM_MODE=openrouter
+```
+
+**Opção B: sem chave.** O LLM é simulado e as respostas vêm de regras fixas. Serve só para ver o sistema funcionando:
+
+```ini
+LLM_MODE=mock
+```
+
+> ⚠️ Se você deixar `LLM_MODE=openrouter` **sem** chave, o sistema não quebra: toda pergunta recebe a resposta segura "Não consegui responder agora..." (é o tratamento de falha de "chave ausente"). Para testar sem chave, use a opção B. Confira o modo em http://localhost:8000/health (`llm_mode` e `chave_configurada`).
+
+### Passo 4: subir a API e testar
+
+```bash
 uvicorn app.main:app --reload
-# docs interativas: http://localhost:8000/docs
-# página de chat:  http://localhost:8000/   (ou abra web/index.html direto no navegador)
+```
 
-# testes (não precisam de chave nem de internet)
-python -m pytest -v
+| Abra no navegador | O que tem lá |
+|---|---|
+| http://localhost:8000/ | Página de chat do AlertaVizinho |
+| http://localhost:8000/docs | Swagger: teste qualquer endpoint pelo navegador |
+| http://localhost:8000/health | Modo, modelo e se a chave está configurada |
 
-# evidências
-python scripts/gerar_evidencias.py          # chamadas reais ao OpenRouter
-python scripts/gerar_evidencias.py --mock   # sem chave, LLM simulado
+Perguntas para testar no chat:
+- "Como faço pra me cadastrar?"
+- "O que significa alerta laranja?"
+- "Qual o resultado do jogo de domingo?" (fora de escopo)
+- "Socorro, a água está entrando em casa" (emergência)
+
+O fluxo dos boletins (estruturar → aprovar → liberar) está na [seção 9](#9-endpoints-e-exemplos-curl). Também dá para testá-lo pelo Swagger.
+
+### Opcional: gerar as evidências de novo
+
+```bash
+python scripts/gerar_evidencias.py          # chamadas reais (precisa da chave)
+python scripts/gerar_evidencias.py --mock   # sem chave
 ```
 
 ## 9. Endpoints e exemplos `curl`
