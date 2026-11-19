@@ -11,7 +11,7 @@ import json
 import re
 from typing import Iterable, Union
 
-from .guardrails import detectar_emergencia, normalizar, PREFIXO_EMERGENCIA
+from .guardrails import PREFIXO_EMERGENCIA, detectar_emergencia, normalizar
 from .llm_client import LLMError
 
 
@@ -65,25 +65,32 @@ _TIPOS = [
     ("alagamento", r"alagamento|alagad"),
     ("tempestade", r"tempestade|chuva|temporal|vendaval"),
 ]
+_RE_PERIGO = re.compile(r"\bperigo\b(?! potencial)")
+_RE_NIVEL_ALTO = re.compile(r"(nivel|risco)[^\n]{0,25}\balto\b")
+_RE_MUNICIPIOS = re.compile(r"munic[ií]pios?(?:\(s\))?(?: afetados)?\s*:\s*([^\n.]+)", re.IGNORECASE)
+_RE_BAIRROS = re.compile(r"bairros?(?: com maior risco)?\s*:\s*([^\n.]+)", re.IGNORECASE)
+
+
+def _lista(m: re.Match | None) -> list[str]:
+    return [x.strip() for x in re.split(r",| e ", m.group(1)) if x.strip()] if m else []
 
 
 def _mock_boletim(messages: list[dict]) -> str:
+    """Extrator por regras: imita o LLM o suficiente para a demo e os testes."""
     texto = _entre(_primeiro_user(messages), "boletim")
     t = normalizar(texto)
     tipo = next((nome for nome, rx in _TIPOS if re.search(rx, t)), "outro")
     if "grande perigo" in t or "vermelho" in t or "muito alto" in t:
         sev = "extrema"
-    elif re.search(r"\bperigo\b(?! potencial)", t) or "laranja" in t or "risco alto" in t:
+    elif _RE_PERIGO.search(t) or "laranja" in t or _RE_NIVEL_ALTO.search(t):
         sev = "alta"
     elif "perigo potencial" in t or "amarelo" in t or "moderado" in t:
         sev = "moderada"
     else:
         sev = "baixa"
     fonte = "INMET" if "inmet" in t else "Cemaden" if "cemaden" in t else "Defesa Civil" if "defesa civil" in t else "outra"
-    m = re.search(r"munic[ií]pios?(?: afetados)?\s*:\s*([^\n.]+)", texto, re.IGNORECASE)
-    municipios = [x.strip() for x in re.split(r",| e ", m.group(1)) if x.strip()] if m else []
-    b = re.search(r"bairros?\s*:\s*([^\n.]+)", texto, re.IGNORECASE)
-    bairros = [x.strip() for x in re.split(r",| e ", b.group(1)) if x.strip()] if b else []
+    municipios = _lista(_RE_MUNICIPIOS.search(texto))
+    bairros = _lista(_RE_BAIRROS.search(texto))
     regioes = [{"municipio": mu, "bairros": bairros if i == 0 else []} for i, mu in enumerate(municipios)]
     nome_tipo = tipo.replace("_", " ")
     locais = ", ".join(municipios) or "sua regiao"
