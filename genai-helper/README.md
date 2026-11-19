@@ -506,8 +506,8 @@ Todas as evidências abaixo vieram de **chamadas reais ao OpenRouter** feitas po
 |---|---|
 | Casos executados | 9 (5 de chat, 3 de boletim e 1 de falha) |
 | JSON válido de primeira | 9 de 9 (nenhum precisou de reparo) |
-| Latência do chat | de 1,5 a 2,9 s |
-| Latência dos boletins | de 3,1 a 4,3 s |
+| Latência do chat | de 1,5 a 2,5 s |
+| Latência dos boletins | de 3,1 a 4,1 s |
 | Fallback acionado na falha provocada | sim (`gpt-4o-mini` → `nemotron-3.5:free`) |
 | Prompt injection obedecida pelo modelo | não |
 
