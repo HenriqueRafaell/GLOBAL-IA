@@ -1,7 +1,7 @@
 {
   "caso": "chat_03_nao_recebi_com_dados_pessoais",
   "modo": "MOCK (LLM simulado, sem chamada real)",
-  "gerado_em": "2026-11-19 16:22",
+  "gerado_em": "2026-11-19 16:23",
   "entrada": {
     "mensagem": "Não recebi o alerta da chuva de ontem. Meu número é (11) 98765-4321 e moro na Rua das Flores, 123."
   },
@@ -33,7 +33,7 @@
     "emergencia_detectada": false,
     "aviso": "Você está falando com um assistente automático. Ele pode errar.",
     "meta": {
-      "modelo_usado": "openai/gpt-4o-mini",
+      "modelo_usado": "mock:openai/gpt-4o-mini",
       "tentativas": 1,
       "latencia_ms": 0,
       "fallback": false,

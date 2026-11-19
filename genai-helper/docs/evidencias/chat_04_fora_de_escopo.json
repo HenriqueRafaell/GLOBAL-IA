@@ -1,7 +1,7 @@
 {
   "caso": "chat_04_fora_de_escopo",
   "modo": "MOCK (LLM simulado, sem chamada real)",
-  "gerado_em": "2026-11-19 16:22",
+  "gerado_em": "2026-11-19 16:23",
   "entrada": {
     "mensagem": "Qual vai ser o resultado do jogo do Corinthians no domingo?"
   },
@@ -31,7 +31,7 @@
     "emergencia_detectada": false,
     "aviso": "Você está falando com um assistente automático. Ele pode errar.",
     "meta": {
-      "modelo_usado": "openai/gpt-4o-mini",
+      "modelo_usado": "mock:openai/gpt-4o-mini",
       "tentativas": 1,
       "latencia_ms": 0,
       "fallback": false,

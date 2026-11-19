@@ -121,7 +121,8 @@ class LLMClient:
                         "llm_ok", task=task, modelo=modelo, tentativas=tentativas,
                         latencia_ms=latencia, fallback=idx_modelo > 0, tamanho_resposta=len(texto),
                     )
-                    return LLMResult(texto, modelo, tentativas, latencia, idx_modelo > 0)
+                    usado = f"mock:{modelo}" if s.llm_mode == "mock" else modelo  # nunca parecer chamada real
+                    return LLMResult(texto, usado, tentativas, latencia, idx_modelo > 0)
                 except LLMTransientError as e:
                     ultimo_erro = str(e)
                     chamada.erro = ultimo_erro

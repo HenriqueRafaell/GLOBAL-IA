@@ -1,7 +1,7 @@
 {
   "caso": "chat_01_cadastro",
   "modo": "MOCK (LLM simulado, sem chamada real)",
-  "gerado_em": "2026-11-19 16:22",
+  "gerado_em": "2026-11-19 16:23",
   "entrada": {
     "mensagem": "Como faço pra me cadastrar no app?"
   },
@@ -33,7 +33,7 @@
     "emergencia_detectada": false,
     "aviso": "Você está falando com um assistente automático. Ele pode errar.",
     "meta": {
-      "modelo_usado": "openai/gpt-4o-mini",
+      "modelo_usado": "mock:openai/gpt-4o-mini",
       "tentativas": 1,
       "latencia_ms": 0,
       "fallback": false,

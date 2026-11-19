@@ -79,6 +79,6 @@ def test_injecao_no_chat_nao_fecha_delimitador():
 def test_resposta_tem_metadados_e_aviso_de_transparencia():
     svc, _ = _svc([j(CHAT_OK)])
     r = svc.responder("como me cadastro?")
-    assert r.meta.modelo_usado == "principal/modelo" and r.meta.tentativas == 1
+    assert r.meta.modelo_usado == "mock:principal/modelo" and r.meta.tentativas == 1
     assert r.meta.fallback is False and r.meta.latencia_ms >= 0 and r.meta.prompt_versao == "chat_system_v1"
     assert "assistente automático" in r.aviso
