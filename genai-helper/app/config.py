@@ -43,7 +43,7 @@ class Settings:
     llm_max_retries: int = 2  # novas tentativas por modelo, além da primeira
     llm_backoff_base_s: float = 1.0  # backoff exponencial: base * 2**tentativa
     llm_json_mode: bool = True  # envia response_format={"type":"json_object"}
-    app_url: str = "https://github.com/[PREENCHER]/genai-helper"  # header HTTP-Referer
+    app_url: str = "https://github.com/HenriqueRafaell/GLOBAL-IA"  # header HTTP-Referer
     app_title: str = "genai-helper CitizenTech"  # header X-Title
     operador_token: str = ""  # se definido, exigido em X-Operador-Token para aprovar/rejeitar
     log_level: str = "INFO"
@@ -73,7 +73,7 @@ class Settings:
             llm_max_retries=int(env("LLM_MAX_RETRIES", "2")),
             llm_backoff_base_s=float(env("LLM_BACKOFF_BASE_S", "1.0")),
             llm_json_mode=_bool(env("LLM_JSON_MODE"), True),
-            app_url=env("APP_URL", "https://github.com/[PREENCHER]/genai-helper"),
+            app_url=env("APP_URL", "https://github.com/HenriqueRafaell/GLOBAL-IA"),
             app_title=env("APP_TITLE", "genai-helper CitizenTech"),
             operador_token=env("OPERADOR_TOKEN", "").strip(),
             log_level=env("LOG_LEVEL", "INFO"),

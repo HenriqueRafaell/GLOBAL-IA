@@ -15,7 +15,7 @@ Global Solution FIAP 2026.2 · Desafio **CitizenTech** · Disciplina **Generativ
 | **Componentes** | App/WhatsApp de cadastro · Visão Computacional (lê o endereço do comprovante de residência) · **genai-helper (este repositório)** · Robô RPA UiPath (lê boletins e dispara alertas) · Maker: abrigo de ponto de ônibus com sombra e banco para dias de calor |
 | **Fontes de dados** | INMET (avisos meteorológicos), Cemaden (risco hidrológico e geológico), boletins da Defesa Civil |
 | **Modelos de IA** | LLM via OpenRouter: `openai/gpt-4o-mini` (principal) e `nvidia/nemotron-3.5-super-vl:free` / `google/gemma-4-31b-it:free` (fallbacks gratuitos). Recuperação de contexto por TF-IDF (scikit-learn) |
-| **Links** | MVP: `[PREENCHER]` · Repositório: `[PREENCHER]` · Vídeo: `[PREENCHER]` |
+| **Repositório** | https://github.com/HenriqueRafaell/GLOBAL-IA |
 | **Indicadores de impacto** | Nº de cadastrados em área de risco · tempo entre o boletim oficial e o alerta entregue · % de alertas entregues por SMS (inclusão de quem não tem WhatsApp) · % de dúvidas resolvidas sem atendimento humano · nº de alertas corrigidos pelo operador antes do envio |
 | **ODS** | **11** (Cidades e comunidades sustentáveis) e **13** (Ação contra a mudança global do clima) |
 
