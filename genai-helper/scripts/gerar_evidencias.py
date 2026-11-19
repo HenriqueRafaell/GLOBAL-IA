@@ -148,6 +148,28 @@ def main() -> int:
     resumo.append("- O alerta com tentativa de injeção continua como rascunho e exige `confirmo_revisao_manual=true` "
                   "para ser aprovado.")
 
+    # ---- falha real: modelo principal inexistente -> fallback ------------- #
+    if settings.llm_mode != "mock":
+        import dataclasses
+
+        s_falha = dataclasses.replace(settings, llm_model="modelo/que-nao-existe")
+        c_falha = LLMClient(s_falha)
+        pergunta = "O que significa alerta laranja?"
+        r = ChatService(c_falha).responder(pergunta)
+        out = r.model_dump()
+        nome = "falha_01_modelo_principal_inexistente_usa_fallback"
+        _salvar(nome, {"caso": nome, "modo": modo, "gerado_em": agora,
+                       "entrada": {"mensagem": pergunta, "modelos": s_falha.modelos},
+                       "chamadas_llm": _chamadas(c_falha), "saida": out})
+        tentativas = [f"`{c.modelo}` → {c.erro or 'ok'}" for c in c_falha.historico]
+        resumo += ["", "## Tratamento de falhas (chamada real)", "",
+                   f"Modelo principal configurado de propósito como `modelo/que-nao-existe`. Lista: `{s_falha.modelos}`.", "",
+                   *[f"{i}. {t}" for i, t in enumerate(tentativas, 1)], "",
+                   f"Resultado: `modelo_usado={r.meta.modelo_usado}`, `fallback={r.meta.fallback}`, "
+                   f"`tentativas={r.meta.tentativas}`, `resposta_segura={r.meta.resposta_segura}`.", "",
+                   _json_md(out)]
+        print(f"[ok] {nome}: modelo={r.meta.modelo_usado} fallback={r.meta.fallback} segura={r.meta.resposta_segura}")
+
     resumo += ["", "## Detalhes dos casos", "", *detalhes]
 
     if not args.sem_pytest:

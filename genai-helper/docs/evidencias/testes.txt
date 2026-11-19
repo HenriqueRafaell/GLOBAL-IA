@@ -92,4 +92,4 @@ tests/test_schemas.py::test_boletim_enum_invalido[fonte-Twitter] PASSED  [ 97%]
 tests/test_schemas.py::test_alerta_final_rejeita_sms_maior_que_160 PASSED [ 98%]
 tests/test_schemas.py::test_edicao_do_operador_valida_limite_e_campos PASSED [100%]
 
-============================= 87 passed in 19.00s =============================
+============================= 87 passed in 19.02s =============================
