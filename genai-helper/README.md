@@ -1,4 +1,4 @@
-# genai-helper — Componente de IA Generativa do MVP "[NOME DO PRODUTO]"
+# genai-helper — Componente de IA Generativa do MVP AlertaVizinho
 
 Global Solution FIAP 2026.2 · Desafio **CitizenTech** · Disciplina **Generative AI for Engineering**
 
@@ -8,7 +8,7 @@ Global Solution FIAP 2026.2 · Desafio **CitizenTech** · Disciplina **Generativ
 
 | Item | Descrição |
 |---|---|
-| **Nome** | [NOME DO PRODUTO] `[PREENCHER]` |
+| **Nome** | **AlertaVizinho**: alerta de enchente e calor extremo para quem mora aqui |
 | **Cidadão e território** | Moradores de áreas de risco de enchente, alagamento, deslizamento e onda de calor (ex.: várzeas e encostas de periferias urbanas), com celular de entrada e conexão fraca |
 | **Problema em uma frase** | Quem mora em área de risco recebe os avisos oficiais tarde, em linguagem técnica, ou não recebe, e por isso não age a tempo |
 | **Proposta de valor** | Alerta de enchente e calor extremo **por endereço**, em linguagem simples, por WhatsApp ou SMS, a partir de avisos oficiais revisados por uma pessoa |
@@ -427,8 +427,10 @@ curl -s -X POST http://localhost:8000/alertas/a1b2c3.../disparado
 
 ## 13. Integrantes
 
-| Nome | RM | Papel |
-|---|---|---|
-| `[PREENCHER]` | `[PREENCHER]` | `[PREENCHER]` |
-| `[PREENCHER]` | `[PREENCHER]` | `[PREENCHER]` |
-| `[PREENCHER]` | `[PREENCHER]` | `[PREENCHER]` |
+| Nome | RM |
+|---|---|
+| Kaio Vinicius Meireles Alves | RM553282 |
+| Lucas Alves de Souza | RM553956 |
+| Guilherme Fernandes de Freitas | RM554323 |
+| João Pedro Chizzolini de Freitas | RM553172 |
+| Henrique Rafael | RM553945 |

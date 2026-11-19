@@ -1,4 +1,4 @@
-# GLOBAL-IA — [NOME DO PRODUTO]
+# GLOBAL-IA — AlertaVizinho
 
 Global Solution FIAP 2026.2 · Desafio CitizenTech · Generative AI for Engineering
 
