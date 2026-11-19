@@ -513,12 +513,23 @@ Todas as evidências abaixo vieram de **chamadas reais ao OpenRouter** feitas po
 
 ### Prints
 
-`[PREENCHER]`: adicione os prints em `docs/evidencias/prints/` e referencie aqui:
+Prints capturados com a API rodando em modo real (`LLM_MODE=openrouter`). As respostas do chat foram geradas pelo `openai/gpt-4o-mini` no momento da captura.
 
-- `![Página de chat](docs/evidencias/prints/chat.png)`
-- `![Swagger /docs](docs/evidencias/prints/swagger.png)`
-- `![pytest -v](docs/evidencias/prints/pytest.png)`
-- `![Robô UiPath chamando /boletins/estruturar](docs/evidencias/prints/uipath.png)`
+**Página de chat no celular: dúvida comum (com fonte citada) e pergunta fora de escopo**
+
+<img src="docs/evidencias/prints/chat_duvidas.png" alt="Chat do AlertaVizinho respondendo sobre foto ilegível com passos numerados e fonte, e recusando pergunta sobre futebol" width="360">
+
+**Página de chat: emergência.** A resposta começa com 199/193/192 e ganha destaque visual
+
+<img src="docs/evidencias/prints/chat_emergencia.png" alt="Chat do AlertaVizinho respondendo a uma emergência de enchente com os números 199, 193 e 192 em destaque" width="360">
+
+**API REST: Swagger em `/docs`, com todos os endpoints e schemas**
+
+![Swagger do genai-helper](docs/evidencias/prints/swagger.png)
+
+**Testes: `pytest -v`, 87 testes passando**
+
+![Saída do pytest -v](docs/evidencias/prints/pytest.png)
 
 ## 13. Integrantes
 
