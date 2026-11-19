@@ -14,7 +14,7 @@ Global Solution FIAP 2026.2 · Desafio **CitizenTech** · Disciplina **Generativ
 | **Proposta de valor** | Alerta de enchente e calor extremo **por endereço**, em linguagem simples, por WhatsApp ou SMS, a partir de avisos oficiais revisados por uma pessoa |
 | **Componentes** | App/WhatsApp de cadastro · Visão Computacional (lê o endereço do comprovante de residência) · **genai-helper (este repositório)** · Robô RPA UiPath (lê boletins e dispara alertas) · Maker: abrigo de ponto de ônibus com sombra e banco para dias de calor |
 | **Fontes de dados** | INMET (avisos meteorológicos), Cemaden (risco hidrológico e geológico), boletins da Defesa Civil |
-| **Modelos de IA** | LLM via OpenRouter: `openai/gpt-4o-mini` (principal) e `meta-llama/llama-3.3-70b-instruct:free` (fallback). Recuperação de contexto por TF-IDF (scikit-learn) |
+| **Modelos de IA** | LLM via OpenRouter: `openai/gpt-4o-mini` (principal) e `nvidia/nemotron-3.5-super-vl:free` / `google/gemma-4-31b-it:free` (fallbacks gratuitos). Recuperação de contexto por TF-IDF (scikit-learn) |
 | **Links** | MVP: `[PREENCHER]` · Repositório: `[PREENCHER]` · Vídeo: `[PREENCHER]` |
 | **Indicadores de impacto** | Nº de cadastrados em área de risco · tempo entre o boletim oficial e o alerta entregue · % de alertas entregues por SMS (inclusão de quem não tem WhatsApp) · % de dúvidas resolvidas sem atendimento humano · nº de alertas corrigidos pelo operador antes do envio |
 | **ODS** | **11** (Cidades e comunidades sustentáveis) e **13** (Ação contra a mudança global do clima) |
@@ -82,7 +82,7 @@ flowchart LR
         AP["/alertas/{id}/aprovar"]
         LIB["/alertas/liberados"]
     end
-    LLM[(OpenRouter<br/>gpt-4o-mini → fallback llama-3.3:free)]
+    LLM[(OpenRouter<br/>gpt-4o-mini → fallback nemotron:free → gemma:free)]
     subgraph Fontes["Fontes oficiais"]
         INMET[INMET]
         CEM[Cemaden]
@@ -141,7 +141,7 @@ Toda a configuração fica no `.env` (veja [.env.example](.env.example)). Nada �
 | `OPENROUTER_API_KEY` | (vazio) | Chave do OpenRouter |
 | `LLM_MODE` | `openrouter` | `openrouter` (API real) ou `mock` (respostas simuladas, sem chave e sem internet) |
 | `LLM_MODEL` | `openai/gpt-4o-mini` | Modelo principal |
-| `LLM_FALLBACK_MODELS` | `meta-llama/llama-3.3-70b-instruct:free` | Lista (separada por vírgula) usada em ordem quando o principal falha |
+| `LLM_FALLBACK_MODELS` | `nvidia/nemotron-3.5-super-vl:free,google/gemma-4-31b-it:free` | Lista (separada por vírgula) usada em ordem quando o principal falha |
 | `LLM_TEMPERATURE` | `0.2` | Baixa: respostas consistentes e menos "criativas" (menos alucinação) |
 | `LLM_MAX_TOKENS` | `700` | Suficiente para o JSON do boletim; limita custo |
 | `LLM_TIMEOUT_S` | `30` | Tempo máximo por chamada |
@@ -155,7 +155,9 @@ Toda a configuração fica no `.env` (veja [.env.example](.env.example)). Nada �
 **Por que estes modelos**
 
 - **`openai/gpt-4o-mini` (principal, pago e barato).** Custo baixo por token, o que importa porque cada boletim e cada pergunta geram uma chamada. Tem latência baixa, adequada para chat. Suporta `response_format` JSON e segue bem schemas e instruções longas. Escreve bem em português simples.
-- **`meta-llama/llama-3.3-70b-instruct:free` (fallback, gratuito).** Garante que o serviço continue respondendo se o principal falhar (cota, 429, indisponibilidade) sem custo adicional. Modelo grande e multilíngue, com português aceitável. Pode não respeitar `response_format`: por isso o cliente tenta de novo sem esse parâmetro e o código **sempre** valida e repara o JSON.
+- **`nvidia/nemotron-3.5-super-vl:free` (fallback 1, gratuito).** Garante que o serviço continue respondendo se o principal falhar (cota, 429, indisponibilidade) sem custo adicional. Suporta `response_format` JSON e respondeu bem em português simples nos nossos testes (cerca de 3s). É um modelo de raciocínio: gasta tokens "pensando" antes de responder, por isso `LLM_MAX_TOKENS` fica em 700. Com 120 tokens ele devolveu conteúdo vazio, caso que o cliente trata como falha e repete.
+- **`google/gemma-4-31b-it:free` (fallback 2, gratuito).** Modelo multilíngue do Google com suporte a JSON. Fica como segunda reserva.
+- **Lição aprendida:** na configuração inicial, o fallback `meta-llama/llama-3.3-70b-instruct:free` deixou de existir na versão gratuita (HTTP 404), e os Gemma `:free` estavam com limite estourado no pool compartilhado (HTTP 429). Por isso a lista de fallbacks tem mais de um modelo, o 4xx vai direto ao próximo modelo e o código **sempre** valida e repara o JSON, qualquer que seja o modelo.
 - **Temperatura 0.2.** Em alertas de segurança, consistência vale mais que criatividade.
 - **Trocar de modelo é só mudar o `.env`**, sem tocar no código. Cada resposta informa `meta.modelo_usado`, o que permite comparar modelos.
 
@@ -302,7 +304,7 @@ Os logs são JSON por linha e **não têm dados pessoais**. Eles registram só e
 
 ```json
 {"ts": "2026-11-19T19:22:12+00:00", "evento": "chat_requisicao", "tamanho": 98, "dados_mascarados": {"TELEFONE": 1, "NUMERO": 1}, "emergencia_kw": false, "trechos": 3}
-{"ts": "2026-11-19T19:22:13+00:00", "evento": "llm_fallback", "task": "chat", "de": "openai/gpt-4o-mini", "para": "meta-llama/llama-3.3-70b-instruct:free"}
+{"ts": "2026-11-19T19:22:13+00:00", "evento": "llm_fallback", "task": "chat", "de": "openai/gpt-4o-mini", "para": "nvidia/nemotron-3.5-super-vl:free"}
 ```
 
 ## 8. Como rodar

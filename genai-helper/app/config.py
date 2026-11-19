@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent  # pasta genai-helper/
 
 # Modelos padrão (confira os nomes atuais em https://openrouter.ai/models)
 DEFAULT_MODEL = "openai/gpt-4o-mini"
-DEFAULT_FALLBACKS = "meta-llama/llama-3.3-70b-instruct:free"
+DEFAULT_FALLBACKS = "nvidia/nemotron-3.5-super-vl:free,google/gemma-4-31b-it:free"
 
 
 def _bool(valor: str | None, padrao: bool) -> bool:
