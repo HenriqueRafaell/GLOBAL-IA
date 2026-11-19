@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajuda do App de Alertas</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #111111; --muted: #444444; --borda: #767676;
+    --primaria: #0b4f8a; --primaria-fg: #ffffff; --bot: #eef3f8; --user: #fff6d6;
+    --emerg-bg: #b00020; --emerg-fg: #ffffff; --foco: #ffbf47;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #121212; --fg: #f2f2f2; --muted: #cfcfcf; --borda: #9a9a9a;
+            --primaria: #7cc0ff; --primaria-fg: #001b33; --bot: #1f2933; --user: #3a3220;
+            --emerg-bg: #ff6b81; --emerg-fg: #1a0005; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 18px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.4rem; margin: 0 0 4px; }
+  .aviso { color: var(--muted); font-size: 0.95rem; margin: 0 0 16px; }
+  .emergencia-fixa { background: var(--emerg-bg); color: var(--emerg-fg); padding: 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 600; }
+  .emergencia-fixa a { color: inherit; }
+  #conversa { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  #conversa li { padding: 12px; border-radius: 10px; border: 1px solid var(--borda); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .msg-user { background: var(--user); align-self: flex-end; max-width: 90%; }
+  .msg-bot { background: var(--bot); max-width: 95%; }
+  .msg-emerg { border: 3px solid var(--emerg-bg) !important; }
+  .detalhes { display: block; margin-top: 6px; font-size: 0.85rem; color: var(--muted); }
+  form { display: flex; flex-direction: column; gap: 8px; }
+  label { font-weight: 600; }
+  textarea { width: 100%; min-height: 88px; font: inherit; padding: 10px; border: 2px solid var(--borda);
+             border-radius: 8px; background: var(--bg); color: var(--fg); }
+  button { font: inherit; font-weight: 700; padding: 14px; border: 0; border-radius: 8px; min-height: 48px;
+           background: var(--primaria); color: var(--primaria-fg); cursor: pointer; }
+  button[disabled] { opacity: 0.6; cursor: wait; }
+  :focus-visible { outline: 3px solid var(--foco); outline-offset: 2px; }
+  .dica { font-size: 0.9rem; color: var(--muted); margin: 0; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ajuda do aplicativo de alertas</h1>
+  <p class="aviso">Você está falando com um <strong>assistente automático</strong>. Ele pode errar. Não escreva CPF, senha ou dados pessoais.</p>
+
+  <p class="emergencia-fixa" role="note">
+    Em perigo agora? Ligue
+    <a href="tel:199">199 Defesa Civil</a>,
+    <a href="tel:193">193 Bombeiros</a> ou
+    <a href="tel:192">192 SAMU</a>.
+  </p>
+
+  <h2 class="sr-only">Conversa</h2>
+  <ul id="conversa" aria-live="polite" aria-relevant="additions" aria-label="Mensagens da conversa"></ul>
+  <p id="status" class="sr-only" role="status" aria-live="assertive"></p>
+
+  <form id="form" novalidate>
+    <label for="pergunta">Escreva sua dúvida</label>
+    <textarea id="pergunta" name="pergunta" maxlength="1000" required
+              aria-describedby="dica-teclado" placeholder="Ex.: Como eu troco meu endereço?"></textarea>
+    <p id="dica-teclado" class="dica">Aperte Enter para enviar. Shift + Enter pula linha.</p>
+    <button id="enviar" type="submit">Enviar pergunta</button>
+  </form>
+</main>
+
+<script>
+  // Aberta via http://localhost:8000/ usa a mesma origem; aberta do disco (file://) aponta para localhost.
+  const API = location.protocol === "file:" ? "http://localhost:8000" : "";
+  const conversa = document.getElementById("conversa");
+  const form = document.getElementById("form");
+  const campo = document.getElementById("pergunta");
+  const botao = document.getElementById("enviar");
+  const status = document.getElementById("status");
+
+  function adicionar(texto, classe, detalhes) {
+    const li = document.createElement("li");
+    li.className = classe;
+    const corpo = document.createElement("span");
+    corpo.textContent = texto;
+    li.appendChild(corpo);
+    if (detalhes) {
+      const d = document.createElement("small");
+      d.className = "detalhes";
+      d.textContent = detalhes;
+      li.appendChild(d);
+    }
+    conversa.appendChild(li);
+    li.scrollIntoView({ behavior: "smooth", block: "end" });
+    return li;
+  }
+
+  adicionar("Olá! Posso ajudar com cadastro, comprovante, alertas, troca de endereço e erros do app.", "msg-bot");
+
+  campo.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); }
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const mensagem = campo.value.trim();
+    if (!mensagem) { status.textContent = "Escreva uma pergunta antes de enviar."; campo.focus(); return; }
+    adicionar(mensagem, "msg-user");
+    campo.value = "";
+    botao.disabled = true;
+    botao.textContent = "Enviando...";
+    status.textContent = "Aguardando resposta.";
+    try {
+      const r = await fetch(API + "/chat", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mensagem }),
+      });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const d = await r.json();
+      const extra = [];
+      if (d.precisa_atendimento_humano) extra.push("Sugestão: fale com o atendimento humano (menu Ajuda).");
+      if (d.fontes && d.fontes.length) extra.push("Fonte: " + d.fontes.join(", "));
+      const li = adicionar(d.resposta, "msg-bot" + (d.emergencia_detectada ? " msg-emerg" : ""), extra.join(" "));
+      if (d.emergencia_detectada) li.setAttribute("role", "alert");
+      status.textContent = "Resposta recebida.";
+    } catch (err) {
+      adicionar("Não consegui responder agora. Tente de novo em alguns minutos. Em emergência, ligue 199.", "msg-bot msg-emerg");
+      status.textContent = "Erro ao enviar.";
+    } finally {
+      botao.disabled = false;
+      botao.textContent = "Enviar pergunta";
+      campo.focus();
+    }
+  });
+</script>
+</body>
+</html>

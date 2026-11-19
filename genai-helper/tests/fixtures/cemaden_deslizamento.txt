@@ -1,0 +1,7 @@
+CEMADEN - Centro Nacional de Monitoramento e Alertas de Desastres Naturais
+ALERTA DE RISCO GEOLÓGICO - NÍVEL MUITO ALTO
+Data/hora: 19/11/2026 03:15
+Município: Franco da Rocha (SP)
+Áreas de risco: Vila Ramos, Jardim Progresso, Parque Paulista.
+Acumulado de 96 mm em 24 horas com solo saturado. Possibilidade de deslizamentos de terra em encostas.
+Recomenda-se à Defesa Civil municipal a remoção preventiva de moradores das áreas de risco mapeadas.
